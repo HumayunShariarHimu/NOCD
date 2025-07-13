@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NOCD</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #000;
+    color: red;
+    margin: 0; padding: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  #preloader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+  }
+  #preloader.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .loader-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow:
+      0 0 20px #ff4c4c,
+      0 0 40px #ff4c4c,
+      0 0 60px red;
+  }
+  .container {
+    width: 90%;
+    max-width: 500px;
+    margin-top: 30px;
+    padding: 20px;
+    background: #111;
+    border: 2px solid red;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,76,76,0.4);
+    animation: fadeIn 1s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  h1 {
+    text-align: center;
+    color: red;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px red;
+  }
+  .input-area {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  #noteInput {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid red;
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    font-size: 16px;
+    background: #000;
+    color: red;
+    transition: background 0.3s, border 0.3s;
+  }
+  #noteInput:focus {
+    background: #1a1a1a;
+  }
+  button.add-btn {
+    padding: 10px 15px;
+    border: 2px solid red;
+    background: transparent;
+    color: red;
+    font-size: 16px;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+  button.add-btn:hover {
+    background: red;
+    color: #000;
+    transform: scale(1.05);
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    background: #000;
+    border: 1px solid red;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeInItem 0.4s ease;
+    transition: transform 0.3s, box-shadow 0.3s, color 0.7s ease;
+  }
+  li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0 10px rgba(255,76,76,0.6);
+  }
+  @keyframes fadeInItem {
+    from { opacity:0; transform: translateX(-10px);}
+    to { opacity:1; transform: translateX(0);}
+  }
+  li.fade-out {
+    opacity: 0;
+    transform: translateX(-100%);
+    color: #32CD32 !important; 
+    transition: opacity 0.7s ease, transform 0.7s ease, color 0.7s ease;
+  }
+  button.delete-btn {
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+  }
+  button.delete-btn:hover {
+    transform: scale(1.2);
+    color: #ff1a1a;
+  }
+  @media (max-width: 500px) {
+    h1 { font-size: 20px; }
+    #noteInput, button.add-btn { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+  <div id="preloader">
+    <img src="NOCD.png" alt="Preloader" class="loader-img">
+  </div>
+
+  <div class="container">
+    <h1>NOCD</h1>
+   <center><h3>OCD Remover Application</h3></center>
+    <div class="input-area">
+      <input type="text" id="noteInput" placeholder="আপনার OCD বিহেভিয়ার লিখুন" />
+      <button class="add-btn" onclick="addNote()">Trigger</button>
+    </div>
+    <ul id="noteList"></ul>
+  </div>
+  <audio id="deleteSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9b249fda4f.mp3?filename=click-remove-2-100766.mp3" preload="auto"></audio>
+
+<script>
+let notes = JSON.parse(localStorage.getItem('ocdNotes')) || [];
+function displayNotes() {
+  const noteList = document.getElementById('noteList');
+  noteList.innerHTML = '';
+  notes.forEach((note, index) => {
+    const li = document.createElement('li');
+    li.textContent = note;
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '❌';
+    delBtn.className = 'delete-btn';
+    delBtn.onclick = () => deleteNote(index, li);
+
+    li.appendChild(delBtn);
+    noteList.appendChild(li);
+  });
+}
+function addNote() {
+  const noteInput = document.getElementById('noteInput');
+  const noteText = noteInput.value.trim();
+  if(noteText) {
+    for(let i=0; i<11; i++) {
+      notes.push(noteText);
+    }
+    localStorage.setItem('ocdNotes', JSON.stringify(notes));
+    noteInput.value = '';
+    displayNotes();
+  }
+}
+function deleteNote(index, liElement) {
+  document.getElementById('deleteSound').play();
+  liElement.classList.add('fade-out');
+  setTimeout(() => {
+    notes.splice(index, 1);
+    localStorage.setItem('ocdNotes', JSON.stringify(notes));
+    displayNotes();
+  }, 700);
+}
+window.addEventListener('load', () => {
+  document.getElementById('preloader').classList.add('fade-out');
+});
+displayNotes();
+</script>
+
+</body>
+</html>
