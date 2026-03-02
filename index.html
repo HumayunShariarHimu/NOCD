@@ -1,207 +1,259 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NOCD</title>
-<style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #000;
-    color: red;
-    margin: 0; padding: 0;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-  }
-  #preloader {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
-  }
-  #preloader.fade-out {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .loader-img {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow:
-      0 0 20px #ff4c4c,
-      0 0 40px #ff4c4c,
-      0 0 60px red;
-  }
-  .container {
-    width: 90%;
-    max-width: 500px;
-    margin-top: 30px;
-    padding: 20px;
-    background: #111;
-    border: 2px solid red;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255,76,76,0.4);
-    animation: fadeIn 1s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  h1 {
-    text-align: center;
-    color: red;
-    margin-bottom: 20px;
-    text-shadow: 0 0 5px red;
-  }
-  .input-area {
-    display: flex;
-    margin-bottom: 20px;
-  }
-  #noteInput {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid red;
-    border-right: none;
-    border-radius: 5px 0 0 5px;
-    outline: none;
-    font-size: 16px;
-    background: #000;
-    color: red;
-    transition: background 0.3s, border 0.3s;
-  }
-  #noteInput:focus {
-    background: #1a1a1a;
-  }
-  button.add-btn {
-    padding: 10px 15px;
-    border: 2px solid red;
-    background: transparent;
-    color: red;
-    font-size: 16px;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
-    transition: background 0.3s, color 0.3s, transform 0.2s;
-  }
-  button.add-btn:hover {
-    background: red;
-    color: #000;
-    transform: scale(1.05);
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  li {
-    background: #000;
-    border: 1px solid red;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    animation: fadeInItem 0.4s ease;
-    transition: transform 0.3s, box-shadow 0.3s, color 0.7s ease;
-  }
-  li:hover {
-    transform: translateX(5px);
-    box-shadow: 0 0 10px rgba(255,76,76,0.6);
-  }
-  @keyframes fadeInItem {
-    from { opacity:0; transform: translateX(-10px);}
-    to { opacity:1; transform: translateX(0);}
-  }
-  li.fade-out {
-    opacity: 0;
-    transform: translateX(-100%);
-    color: #32CD32 !important; 
-    transition: opacity 0.7s ease, transform 0.7s ease, color 0.7s ease;
-  }
-  button.delete-btn {
-    background: transparent;
-    border: none;
-    color: red;
-    font-size: 18px;
-    cursor: pointer;
-    transition: transform 0.2s, color 0.2s;
-  }
-  button.delete-btn:hover {
-    transform: scale(1.2);
-    color: #ff1a1a;
-  }
-  @media (max-width: 500px) {
-    h1 { font-size: 20px; }
-    #noteInput, button.add-btn { font-size: 14px; }
-  }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NOCD - OCD Removing Psychological Tasking Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #ff0000;
+            --dark-red: #8b0000;
+            --bg-black: #080808;
+            --glass-bg: rgba(20, 20, 20, 0.9);
+        }
+
+        body {
+            font-family: 'Hind Siliguri', 'Segoe UI', sans-serif;
+            background-color: var(--bg-black);
+            background-image: radial-gradient(circle at center, #1a0000 0%, #080808 100%);
+            color: var(--primary-red);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .fade-out { opacity: 0 !important; pointer-events: none !important; }
+
+        .loader-img {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-red);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0px var(--primary-red); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px var(--primary-red); }
+            100% { transform: scale(1); box-shadow: 0 0 0px var(--primary-red); }
+        }
+
+        /* Container */
+        .container {
+            width: 92%;
+            max-width: 450px;
+            margin: 40px auto;
+            padding: 25px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        h1 { text-align: center; font-size: 2.2rem; letter-spacing: 1.5px; margin-bottom: 5px; text-shadow: 0 0 10px red; }
+        .subtitle { text-align: center; color: #ccc; font-size: 0.8rem; margin-bottom: 25px; opacity: 0.7; }
+
+        .input-area { display: flex; gap: 10px; margin-bottom: 25px; }
+
+        #noteInput {
+            flex: 1;
+            padding: 12px;
+            background: #000;
+            border: 1px solid var(--dark-red);
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .add-btn {
+            padding: 12px 20px;
+            background: var(--primary-red);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .add-btn:active { transform: scale(0.95); }
+
+        ul { list-style: none; padding: 0; width: 100%; }
+        li {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #eee;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .delete-btn { background: none; border: none; color: var(--primary-red); cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+        .delete-btn:hover { transform: scale(1.2); }
+
+        li.removing {
+            transform: scale(0.9) translateX(30px);
+            opacity: 0;
+            transition: 0.5s;
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        /* Music Controller */
+        #musicToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.15);
+            border: 1px solid var(--primary-red);
+            color: var(--primary-red);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        footer { margin-top: auto; padding: 25px; font-size: 0.85rem; color: #666; text-align: center; }
+        footer b { color: var(--primary-red); letter-spacing: 1px; }
+
+        @media (max-width: 480px) {
+            .input-area { flex-direction: column; }
+            .add-btn { width: 100%; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
 <body>
-  <div id="preloader">
-    <img src="NOCD.png" alt="Preloader" class="loader-img">
-  </div>
 
-  <div class="container">
-    <h1>NOCD</h1>
-   <center><h3>OCD Remover Application</h3></center>
-    <div class="input-area">
-      <input type="text" id="noteInput" placeholder="আপনার OCD বিহেভিয়ার লিখুন" />
-      <button class="add-btn" onclick="addNote()">Trigger</button>
+    <div id="preloader">
+    <img src="./nocd.png" alt="NOCD..." class="loader-img">
+</div>
+
+
+    <div class="container">
+        <h1>NOCD</h1>
+        <div class="subtitle">OCD Removing Psychological Tasking Application</div>
+
+        <div class="input-area">
+            <input type="text" id="noteInput" placeholder="আপনার অবসেসিভ চিন্তাটি লিখুন..." />
+            <button class="add-btn" onclick="addNote()">TRIGGER</button>
+        </div>
+
+        <ul id="noteList"></ul>
     </div>
-    <ul id="noteList"></ul>
-  </div>
-  <audio id="deleteSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9b249fda4f.mp3?filename=click-remove-2-100766.mp3" preload="auto"></audio>
 
-<script>
-let notes = JSON.parse(localStorage.getItem('ocdNotes')) || [];
-function displayNotes() {
-  const noteList = document.getElementById('noteList');
-  noteList.innerHTML = '';
-  notes.forEach((note, index) => {
-    const li = document.createElement('li');
-    li.textContent = note;
-    const delBtn = document.createElement('button');
-    delBtn.textContent = '❌';
-    delBtn.className = 'delete-btn';
-    delBtn.onclick = () => deleteNote(index, li);
+    <div id="musicToggle" onclick="toggleMusic()">🎵</div>
 
-    li.appendChild(delBtn);
-    noteList.appendChild(li);
-  });
-}
-function addNote() {
-  const noteInput = document.getElementById('noteInput');
-  const noteText = noteInput.value.trim();
-  if(noteText) {
-    for(let i=0; i<11; i++) {
-      notes.push(noteText);
-    }
-    localStorage.setItem('ocdNotes', JSON.stringify(notes));
-    noteInput.value = '';
-    displayNotes();
-  }
-}
-function deleteNote(index, liElement) {
-  document.getElementById('deleteSound').play();
-  liElement.classList.add('fade-out');
-  setTimeout(() => {
-    notes.splice(index, 1);
-    localStorage.setItem('ocdNotes', JSON.stringify(notes));
-    displayNotes();
-  }, 700);
-}
-window.addEventListener('load', () => {
-  document.getElementById('preloader').classList.add('fade-out');
-});
-displayNotes();
-</script>
+    <footer>
+        Developed by <b>Humayun Shariar Himu</b>
+    </footer>
 
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://raw.githubusercontent.com/HumayunShariarHimu/NOCD/main/meditation_music.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="removeSound" preload="auto">
+        <source src="https://raw.githubusercontent.com/HumayunShariarHimu/NOCD/main/remove.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let notes = JSON.parse(localStorage.getItem('ocdNotes')) || [];
+        const bgMusic = document.getElementById('bgMusic');
+        const removeSound = document.getElementById('removeSound');
+        const musicToggle = document.getElementById('musicToggle');
+
+        // Set remove sound volume to be light (0.3 = 30%)
+        removeSound.volume = 0.3;
+
+        function displayNotes() {
+            const noteList = document.getElementById('noteList');
+            noteList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${note}</span>
+                    <button class="delete-btn" onclick="deleteNote(${index}, this.parentElement)">✕</button>
+                `;
+                noteList.appendChild(li);
+            });
+        }
+
+        function addNote() {
+            const noteInput = document.getElementById('noteInput');
+            const noteText = noteInput.value.trim();
+            if(noteText) {
+                // Play background music on trigger
+                if (bgMusic.paused) {
+                    bgMusic.play().then(() => {
+                        musicToggle.style.display = 'flex';
+                    }).catch(e => console.log("Play blocked, waiting for interaction"));
+                }
+
+                for(let i=0; i<11; i++) {
+                    notes.push(noteText);
+                }
+                localStorage.setItem('ocdNotes', JSON.stringify(notes));
+                noteInput.value = '';
+                displayNotes();
+            }
+        }
+
+        function deleteNote(index, liElement) {
+            // Play remove sound at low volume
+            removeSound.currentTime = 0;
+            removeSound.play();
+
+            liElement.classList.add('removing');
+            
+            setTimeout(() => {
+                notes.splice(index, 1);
+                localStorage.setItem('ocdNotes', JSON.stringify(notes));
+                displayNotes();
+            }, 500);
+        }
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggle.innerText = '🎵';
+            } else {
+                bgMusic.pause();
+                musicToggle.innerText = '🔇';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayNotes();
+            setTimeout(() => {
+                document.getElementById('preloader').classList.add('fade-out');
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
